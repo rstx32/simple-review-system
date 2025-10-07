@@ -16,6 +16,44 @@ This repository hosts a Spring Boot-based review platform composed of three appl
 3. Product owners can export their catalog plus reviews to PDF through the backend, which delegates to `pdf_generator`.
 4. Data persists in Postgres; tables are provisioned automatically from `db/init.sql`.
 
+### PDF Export
+
+The backend sends the payload below to `pdf_generator` when generating reports:
+
+```json
+{
+  "ownerId": "<product-owner-uuid>",
+  "products": [
+    {
+      "id": "<product-uuid>",
+      "ownerId": "<product-owner-uuid>",
+      "name": "Product name",
+      "description": "Optional description",
+      "createdAt": "2024-05-01T09:00:00Z"
+    }
+  ],
+  "reviews": [
+    {
+      "productId": "<product-uuid>",
+      "productName": "Product name",
+      "reviews": [
+        {
+          "id": "<review-uuid>",
+          "productId": "<product-uuid>",
+          "reviewerId": "<end-user-uuid>",
+          "rating": 9,
+          "comment": "Review text",
+          "createdAt": "2024-05-04T10:15:00Z",
+          "updatedAt": "2024-05-04T12:30:00Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+`pdf_generator` responds with a PDF (`application/pdf`) that the backend streams back to the caller.
+
 ## Infrastructure
 
 - `docker-compose.yaml` orchestrates all services with shared Maven cache and database volume.
